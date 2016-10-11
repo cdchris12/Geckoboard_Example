@@ -24,10 +24,6 @@ except IOError, e:
 # End try/except block
 
 def main():
-    #TODO:
-    # Prepare the data returned from either/both of these sources for transmittal to Geckoboard's API
-    # Upload the data to Geckoboard
-    # Configure this to all run every 10 minutes
     
     W_API_Key = CONFIG["W_API_Key"] # W Underground's API Key
     G_API_Key = CONFIG["G_API_Key"] # Geckoboard's API Key
