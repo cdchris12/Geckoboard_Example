@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import cherrypy
 from sense_hat import SenseHat
+import json
 
 sense = SenseHat()
 
@@ -13,7 +14,7 @@ class SenseHatServer(object):
         data["temperature"] = sense.get_temperature()
         data["pressure"] = sense.get_pressure()
         
-        return data
+        return json.dumps(data)
     # End def
 # End class
 
