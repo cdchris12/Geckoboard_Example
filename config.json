@@ -1,4 +1,5 @@
 {
 	"G_API_Key": "",
-	"W_API_Key": ""
+	"W_API_Key": "",
+	"RPi_Address": "http://0.0.0.0:8080"
 }
