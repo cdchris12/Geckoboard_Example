@@ -1,0 +1,5 @@
+curl https://api.geckoboard.com/datasets/weather_data \
+  -X PUT \
+  -u '<api_key>:' \
+  -H 'Content-Type: application/json' \
+  -d '{ "fields": { "b_temp": { "type": "number", "name": "Basement_Temperature" }, "o_temp": { "type": "number", "name": "Outside_Temperature" }, "b_hum": { "type": "percentage", "name": "Basement_Humidity" }, "o_hum": { "type": "percentage", "name": "Outside_Humidity"}, "b_press": { "type": "number", "name": "Basement_Pressure"}, "o_press": { "type": "number", "name": "Outside_Pressure" }, "timestamp": { "type": "datetime", "name": "Date" } }, "unique_by": ["timestamp"]}'

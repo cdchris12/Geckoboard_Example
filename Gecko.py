@@ -3,8 +3,11 @@ import requests
 import json
 import os
 import sys
+import arrow
+from requests.auth import HTTPDigestAuth
+from time import sleep
 
-# This flag enables or disables the usage of weather information from my personal Raspberry Pi. If you're not me, you probably want to set this flag to false.
+# This flag enables or disables the usage of weather information from my personal Raspberry Pi. If you're not me, you probably want to set this flag to false. Note that this will break the script, though...
 RPi = True
 
 # Construct the path to our config file's expected location
@@ -22,7 +25,6 @@ except IOError, e:
 
 def main():
     #TODO:
-    # (Optional) Build some sort of API interface for your Raspberry pi which will serve out temperature information from its sense hat
     # Prepare the data returned from either/both of these sources for transmittal to Geckoboard's API
     # Upload the data to Geckoboard
     # Configure this to all run every 10 minutes
@@ -31,7 +33,7 @@ def main():
     G_API_Key = CONFIG["G_API_Key"] # Geckoboard's API Key
     RPi_Address = CONFIG["RPi_Address"] # Raspberry Pi's web address
 
-    if W_API_Key is "" or G_API_Key is "":
+    if W_API_Key == "" or G_API_Key == "":
         exit("One of the API keys is blank!!\n\nPlease make sure that both API key fields are populated prior to running this script")
     # End if
     
@@ -53,14 +55,16 @@ def main():
         ret = sendData(to_send, G_API_Key)
         if not ret:
             exit("Something is wrong with the API call to Geckoboard!!")
+        else:
+            print "Pushed some data!\nSleeping for 10 minutes..."
         # End if
         
         # Sleep for 10 minutes
-        os.sleep(600)
+        sleep(600)
     # End while
 # End def
 
-def getWxInfo(key):
+def getWxInfo(_key):
     # Input is an API key for W Underground
     # Output is a dict containing the following values:
     #   Air Temp
@@ -68,7 +72,7 @@ def getWxInfo(key):
     #   Pressure
     
     s = requests.Session()
-    r = s.get("http://api.wunderground.com/api/%s/conditions/q/ND/Grand_Forks.json" % key)
+    r = s.get("http://api.wunderground.com/api/%s/conditions/q/ND/Grand_Forks.json" % _key)
     
     if r.status_code == 200:
         json_data = json.loads(r.text)
@@ -117,22 +121,37 @@ def prepareData(calc, real):
     # Input is two dicts
     # Output is a single dict
     
-    #TODO:
-    # Blend the two dictionaries together and format appropriately for Geckoboard's API
-    # Return the finished dict
+    json_data = {}
+    json_data["timestamp"] = arrow.utcnow().format('YYYY-MM-DDTHH:mm:ss').encode('ascii','ignore') + "Z"
+    json_data["b_temp"] = calc["temperature"]
+    json_data["b_press"] = calc["pressure"]
+    json_data["b_hum"] = calc["humidity"] / 100
+    json_data["o_temp"] = real["temperature"]
+    json_data["o_press"] = real["pressure"]
+    json_data["o_hum"] = real["humidity"] / 100
     
-    pass
+    ret_data = {}
+    ret_data["data"] = []
+    ret_data["data"].append(json_data)
+    
+    return ret_data
 # End def
 
 def sendData(data, key):
     # Input is a dict of values and an API key to Geckoboard
     # Output is a boolean value indicating the success or failure of the API call
     
-    #TODO:
-    # Send the data to Geckoboard's API
-    # Return True if the API call returns a 200 code, False otherwise
+    headers = {'content-type': 'application/json'}
     
-    pass
+    
+    s = requests.Session()
+    r = s.post("https://api.geckoboard.com/datasets/weather_data/data", auth=(key, ""), data=json.dumps(data), headers=headers)
+    
+    if r.status_code == 200:
+        return True
+    else:
+        return False
+    # End if/else block
 # End def
 
 if __name__ == "__main__":
