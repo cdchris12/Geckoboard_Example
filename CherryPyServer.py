@@ -19,5 +19,13 @@ class SenseHatServer(object):
 # End class
 
 if __name__ == '__main__':
+    
+    cherrypy.config.update(
+        {
+            'server.socket_host': '0.0.0.0',
+            'server.socket_port': 74,
+        }
+    )
+    
     cherrypy.quickstart( SenseHatServer())
 # End if
