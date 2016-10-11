@@ -22,7 +22,6 @@ except IOError, e:
 
 def main():
     #TODO:
-    # Connect to Wunderground's API and get temperature data for Grand Forks every 10 minutes.
     # (Optional) Build some sort of API interface for your Raspberry pi which will serve out temperature information from its sense hat
     # Prepare the data returned from either/both of these sources for transmittal to Geckoboard's API
     # Upload the data to Geckoboard
@@ -50,7 +49,10 @@ def main():
         to_send = prepareData(calc_wx, real_wx)
     
         # Send the prepared data to Geckoboard
-        sendData(to_send, G_API_Key)
+        ret = sendData(to_send, G_API_Key)
+        if not req:
+            exit("Something is wrong with the API call to Geckoboard!!")
+        # End if
         
         # Sleep for 10 minutes
         os.sleep(600)
@@ -58,18 +60,52 @@ def main():
 # End def
 
 def getWxInfo(key):
+    # Input is an API key for W Underground
+    # Output is a dict containing the following values:
+    #   Air Temp
+    #   Humidity
+    #   Pressure
+    
+    #TODO:
+    # Connect to Wx API
+    # Return only the aforementioned values in a dict
+    
     pass
 # End def
 
 def getRPiInfo():
+    # No input
+    # Output is a dict containing the following values:
+    #   Air Temp
+    #   Humidity
+    #   Pressure
+    
+    #TODO:
+    # Connect to RPi interface and obtain data
+    # Return the aforementioned values in a dict
+    
     pass
 # End def
 
 def prepareData(calc, real):
+    # Input is two dicts
+    # Output is a single dict
+    
+    #TODO:
+    # Blend the two dictionaries together and format appropriately for Geckoboard's API
+    # Return the finished dict
+    
     pass
 # End def
 
 def sendData(data, key):
+    # Input is a dict of values and an API key to Geckoboard
+    # Output is a boolean value indicating the success or failure of the API call
+    
+    #TODO:
+    # Send the data to Geckoboard's API
+    # Return True if the API call returns a 200 code, False otherwise
+    
     pass
 # End def
 
