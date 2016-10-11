@@ -29,6 +29,7 @@ def main():
     
     W_API_Key = CONFIG["W_API_Key"] # W Underground's API Key
     G_API_Key = CONFIG["G_API_Key"] # Geckoboard's API Key
+    RPi_Address = CONFIG["RPi_Address"] # Raspberry Pi's web address
 
     if W_API_Key is "" or G_API_Key is "":
         exit("One of the API keys is blank!!\n\nPlease make sure that both API key fields are populated prior to running this script")
@@ -40,7 +41,7 @@ def main():
     
         # Get data from the Raspberry Pi in my basement
         if RPi:
-            real_wx = getRPiInfo()
+            real_wx = getRPiInfo(RPi_Address)
         else:
             real_wx = {}
         # End if/else block
@@ -73,17 +74,23 @@ def getWxInfo(key):
     pass
 # End def
 
-def getRPiInfo():
-    # No input
+def getRPiInfo(addr):
+    # Input is the web address of my Raspberry Pi's server
     # Output is a dict containing the following values:
     #   Air Temp
     #   Humidity
     #   Pressure
     
-    #TODO:
-    # Connect to RPi interface and obtain data
-    # Return the aforementioned values in a dict
+    s = requests.Session()
+    r = s.get(addr)
     
+    if r.status_code == 200:
+        json_data = json.loads(r.text)
+        return json_data
+    else:
+        return {}
+    # End if/else block
+
     pass
 # End def
 
