@@ -51,7 +51,7 @@ def main():
     
         # Send the prepared data to Geckoboard
         ret = sendData(to_send, G_API_Key)
-        if not req:
+        if not ret:
             exit("Something is wrong with the API call to Geckoboard!!")
         # End if
         
@@ -67,11 +67,23 @@ def getWxInfo(key):
     #   Humidity
     #   Pressure
     
-    #TODO:
-    # Connect to Wx API
-    # Return only the aforementioned values in a dict
+    s = requests.Session()
+    r = s.get("http://api.wunderground.com/api/%s/conditions/q/ND/Grand_Forks.json" % key)
     
-    pass
+    if r.status_code == 200:
+        json_data = json.loads(r.text)
+        
+        parsed_data = {}
+        parsed_data["temperature"] = float(json_data["current_observation"]["temp_f"])
+        parsed_data["pressure"] = float(json_data["current_observation"]["pressure_mb"])
+        parsed_data["humidity"] = float(json_data["current_observation"]["relative_humidity"].replace("%", ""))
+        
+        s.close()
+        
+        return parsed_data
+    else:
+        return {}
+    # End if/else block
 # End def
 
 def getRPiInfo(addr):
@@ -86,12 +98,19 @@ def getRPiInfo(addr):
     
     if r.status_code == 200:
         json_data = json.loads(r.text)
-        return json_data
+        s.close()
+        
+        # The Raspberry Pi returns some seriously precise values; let's round them to the nearest tenth.
+        ret_data = {}
+        ret_data["temperature"] = round(json_data["temperature"], 1)
+        ret_data["pressure"] = round(json_data["pressure"], 1)
+        ret_data["humidity"] = round(json_data["humidity"], 1)
+        
+        return ret_data
     else:
+        print r.status_code
         return {}
     # End if/else block
-
-    pass
 # End def
 
 def prepareData(calc, real):
