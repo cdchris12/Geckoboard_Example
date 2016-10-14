@@ -17,8 +17,8 @@ class SenseHatServer(object):
         
         # Convert from Celcius to Farenheit
         temp = sense.get_temperature()
-        temp *= 9
-        temp /= 5
+        temp *= 9.0
+        temp /= 5.0
         temp += 32.0 # Gotta use 32.0, because we want to add a float to a float
         
         # Populate return data structure
