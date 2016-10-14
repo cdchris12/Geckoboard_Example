@@ -119,12 +119,12 @@ def prepareData(calc, real):
     
     json_data = {}
     json_data["timestamp"] = arrow.utcnow().format('YYYY-MM-DDTHH:mm:ss').encode('ascii','ignore') + "Z"
-    json_data["b_temp"] = calc["temperature"]
-    json_data["b_press"] = calc["pressure"]
-    json_data["b_hum"] = calc["humidity"] / 100
-    json_data["o_temp"] = real["temperature"]
-    json_data["o_press"] = real["pressure"]
-    json_data["o_hum"] = real["humidity"] / 100
+    json_data["b_temp"] = real["temperature"]
+    json_data["b_press"] = real["pressure"]
+    json_data["b_hum"] = real["humidity"] / 100
+    json_data["o_temp"] = calc["temperature"]
+    json_data["o_press"] = calc["pressure"]
+    json_data["o_hum"] = calc["humidity"] / 100
     
     ret_data = {}
     ret_data["data"] = []
