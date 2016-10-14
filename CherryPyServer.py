@@ -1,8 +1,12 @@
 #!/usr/bin/python
+
+# Due to the direct hardware requirements of the Sense Hat framework, this script must be ran as root!!
+
 import cherrypy
 from sense_hat import SenseHat
 import json
 
+# Instantiate only one SenseHat object, which we will route every request through 
 sense = SenseHat()
 
 class SenseHatServer(object):
@@ -10,8 +14,16 @@ class SenseHatServer(object):
     
     def index(self):
         data = {}
+        
+        # Convert from Celcius to Farenheit
+        temp = sense.get_temperature()
+        temp *= 9
+        temp /= 5
+        temp += 32.0 # Gotta use 32.0, because we want to add a float to a float
+        
+        # Populate return data structure
         data["humidity"] = sense.get_humidity()
-        data["temperature"] = sense.get_temperature()
+        data["temperature"] = temp
         data["pressure"] = sense.get_pressure()
         
         return json.dumps(data)
